@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>GreenRoute - Erasmus+ Prototype</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 15px; background: #f4f6f8; }
+    #app { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    #map { height: 380px; border-radius: 8px; margin-top: 15px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
+    .card { padding: 15px; border-radius: 8px; background: #e8f5e9; border: 1px solid #c8e6c9; }
+    .card h3 { margin-top: 0; color: #2e7d32; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h2>🌿 GreenRoute - Planificator Sustenabil</h2>
+    <label>Distanță traseu estimată: <input type="range" id="dist" min="1" max="20" value="5"> <b id="distVal">5</b> km</label>
+    
+    <div class="grid">
+      <div class="card">
+        <h3>🚶 Mers pe jos</h3>
+        <p>Economie: <b id="walkMoney">0</b> RON</p>
+        <p>CO₂ evitat: <b id="walkCO2">0</b> g</p>
+      </div>
+      <div class="card">
+        <h3>🚲 Bicicletă</h3>
+        <p>Economie: <b id="bikeMoney">0</b> RON</p>
+        <p>CO₂ evitat: <b id="bikeCO2">0</b> g</p>
+      </div>
+      <div class="card">
+        <h3>🚌 Autobuz</h3>
+        <p>Economie: <b id="busMoney">0</b> RON</p>
+        <p>CO₂ evitat: <b id="busCO2">0</b> g</p>
+      </div>
+    </div>
+
+    <div id="map"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([46.7712, 23.6236], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    const distSlider = document.getElementById('dist');
+    const distVal = document.getElementById('distVal');
+
+    function updateCalculations() {
+      const d = parseFloat(distSlider.value);
+      distVal.innerText = d;
+      const carCost = (d * (8.0 / 100) * 7.5).toFixed(2);
+      const carCO2 = (d * 135).toFixed(0);
+
+      document.getElementById('walkMoney').innerText = carCost;
+      document.getElementById('walkCO2').innerText = carCO2;
+
+      document.getElementById('bikeMoney').innerText = carCost;
+      document.getElementById('bikeCO2').innerText = carCO2;
+
+      const busTicket = 3.50;
+      const busSavings = Math.max(0, carCost - busTicket).toFixed(2);
+      const busCO2Saved = Math.max(0, d * (135 - 38)).toFixed(0);
+      document.getElementById('busMoney').innerText = busSavings;
+      document.getElementById('busCO2Saved' || 'busCO2').innerText = busCO2Saved;
+    }
+
+    distSlider.addEventListener('input', updateCalculations);
+    updateCalculations();
+  </script>
+</body>
+</html>
